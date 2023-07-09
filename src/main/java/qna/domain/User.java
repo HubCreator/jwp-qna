@@ -2,25 +2,30 @@ package qna.domain;
 
 import qna.UnAuthorizedException;
 
+import javax.persistence.*;
 import java.util.Objects;
 
+@Entity
+@Table(name = "users")
 public class User {
     public static final GuestUser GUEST_USER = new GuestUser();
-
+    @Id
+    @GeneratedValue(strategy = javax.persistence.GenerationType.IDENTITY)
     private Long id;
+    @Column(name = "user_id", nullable = false, length = 20, unique = true)
     private String userId;
+    @Column(name = "password", nullable = false, length = 20)
     private String password;
+    @Column(name = "name", nullable = false, length = 20)
     private String name;
+    @Column(name = "email", length = 50)
     private String email;
 
-    private User() {
-    }
-
-    public User(String userId, String password, String name, String email) {
+    public User(final String userId, final String password, final String name, final String email) {
         this(null, userId, password, name, email);
     }
 
-    public User(Long id, String userId, String password, String name, String email) {
+    public User(final Long id, final String userId, final String password, final String name, final String email) {
         this.id = id;
         this.userId = userId;
         this.password = password;
@@ -28,12 +33,16 @@ public class User {
         this.email = email;
     }
 
-    public void update(User loginUser, User target) {
-        if (!matchUserId(loginUser.userId)) {
+    protected User() {
+
+    }
+
+    public void update(final User loginUser, final User target) {
+        if (!this.matchUserId(loginUser.userId)) {
             throw new UnAuthorizedException();
         }
 
-        if (!matchPassword(target.password)) {
+        if (!this.matchPassword(target.password)) {
             throw new UnAuthorizedException();
         }
 
@@ -41,21 +50,21 @@ public class User {
         this.email = target.email;
     }
 
-    private boolean matchUserId(String userId) {
+    private boolean matchUserId(final String userId) {
         return this.userId.equals(userId);
     }
 
-    public boolean matchPassword(String targetPassword) {
+    public boolean matchPassword(final String targetPassword) {
         return this.password.equals(targetPassword);
     }
 
-    public boolean equalsNameAndEmail(User target) {
+    public boolean equalsNameAndEmail(final User target) {
         if (Objects.isNull(target)) {
             return false;
         }
 
-        return name.equals(target.name) &&
-                email.equals(target.email);
+        return this.name.equals(target.name) &&
+                this.email.equals(target.email);
     }
 
     public boolean isGuestUser() {
@@ -63,53 +72,53 @@ public class User {
     }
 
     public Long getId() {
-        return id;
+        return this.id;
     }
 
-    public void setId(Long id) {
+    public void setId(final Long id) {
         this.id = id;
     }
 
     public String getUserId() {
-        return userId;
+        return this.userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(final String userId) {
         this.userId = userId;
     }
 
     public String getPassword() {
-        return password;
+        return this.password;
     }
 
-    public void setPassword(String password) {
+    public void setPassword(final String password) {
         this.password = password;
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
     public String getEmail() {
-        return email;
+        return this.email;
     }
 
-    public void setEmail(String email) {
+    public void setEmail(final String email) {
         this.email = email;
     }
 
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
-                ", userId='" + userId + '\'' +
-                ", password='" + password + '\'' +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
+                "id=" + this.id +
+                ", userId='" + this.userId + '\'' +
+                ", password='" + this.password + '\'' +
+                ", name='" + this.name + '\'' +
+                ", email='" + this.email + '\'' +
                 '}';
     }
 
