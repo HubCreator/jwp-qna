@@ -77,10 +77,10 @@ public class Question extends BaseEntity {
 
     private List<DeleteHistory> deleteWithAnswers(List<Answer> answers) {
         List<DeleteHistory> deleteHistories = new ArrayList<>();
-        changeDelete(true);
+        this.deleted = true;
         deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
         for (Answer answer : answers) {
-            answer.changeDelete(true);
+            answer.changeDelete();
             deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
         }
         return deleteHistories;
@@ -112,10 +112,6 @@ public class Question extends BaseEntity {
 
     public boolean isDeleted() {
         return deleted;
-    }
-
-    public void changeDelete(final boolean deleted) {
-        this.deleted = deleted;
     }
 
     @Override

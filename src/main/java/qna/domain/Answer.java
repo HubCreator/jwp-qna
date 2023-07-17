@@ -84,8 +84,8 @@ public class Answer extends BaseEntity {
         return deleted;
     }
 
-    public void changeDelete(boolean deleted) {
-        this.deleted = deleted;
+    public void changeDelete() {
+        this.deleted = true;
     }
 
     @Override
