@@ -9,11 +9,10 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 public abstract class BaseEntity {
 
-    @NotNull
-    @Column(updatable = false)
+    @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt;
 
-    @NotNull
+    @Column(nullable = false)
     private LocalDateTime updatedAt;
 
     public BaseEntity() {
