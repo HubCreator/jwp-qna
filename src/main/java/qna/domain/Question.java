@@ -1,5 +1,7 @@
 package qna.domain;
 
+import qna.CannotDeleteException;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,6 +12,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -50,6 +55,37 @@ public class Question extends BaseEntity {
         return this;
     }
 
+    public List<DeleteHistory> delete(User loginUser, List<Answer> answers) throws CannotDeleteException {
+        validateQuestion(loginUser);
+        validateAnswers(loginUser, answers);
+        return deleteWithAnswers(answers);
+    }
+
+    private void validateQuestion(User loginUser) throws CannotDeleteException {
+        if (!this.isOwner(loginUser)) {
+            throw new CannotDeleteException("질문을 삭제할 권한이 없습니다.");
+        }
+    }
+
+    private void validateAnswers(User loginUser, List<Answer> answers) throws CannotDeleteException {
+        for (Answer answer : answers) {
+            if (!answer.isOwner(loginUser)) {
+                throw new CannotDeleteException("다른 사람이 쓴 답변이 있어 삭제할 수 없습니다.");
+            }
+        }
+    }
+
+    private List<DeleteHistory> deleteWithAnswers(List<Answer> answers) {
+        List<DeleteHistory> deleteHistories = new ArrayList<>();
+        changeDelete(true);
+        deleteHistories.add(new DeleteHistory(ContentType.QUESTION, id, writer, LocalDateTime.now()));
+        for (Answer answer : answers) {
+            answer.changeDelete(true);
+            deleteHistories.add(new DeleteHistory(ContentType.ANSWER, answer.getId(), answer.getWriter(), LocalDateTime.now()));
+        }
+        return deleteHistories;
+    }
+
     public boolean isOwner(User writer) {
         return this.writer.equals(writer);
     }
@@ -78,7 +114,7 @@ public class Question extends BaseEntity {
         return deleted;
     }
 
-    public void setDeleted(final boolean deleted) {
+    public void changeDelete(final boolean deleted) {
         this.deleted = deleted;
     }
 

@@ -1,6 +1,5 @@
 package qna.domain;
 
-import org.springframework.lang.Nullable;
 import qna.NotFoundException;
 import qna.UnAuthorizedException;
 
@@ -85,7 +84,7 @@ public class Answer extends BaseEntity {
         return deleted;
     }
 
-    public void setDeleted(boolean deleted) {
+    public void changeDelete(boolean deleted) {
         this.deleted = deleted;
     }
 
